@@ -12,8 +12,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 from core.constants import (
-    G0, MU_EARTH, MU_MOON, MU_JUPITER,
-    R_EARTH, EARTH_MOON_DIST, EARTH_JUPITER_DIST,
+    G0, EARTH_MU, MOON_MU, JUPITER_MU,
+    EARTH_RADIUS, EARTH_MOON_DIST, EARTH_JUPITER_DIST,
     MISSION_DELTA_V,
 )
 from trade_studies.plot_utils import PlotStyle

@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 from core.constants import (
-    G0, MU_EARTH, MU_MOON, MU_JUPITER, MU_SUN,
-    R_EARTH, R_MOON, R_JUPITER,
+    G0, EARTH_MU, MOON_MU, JUPITER_MU, SUN_MU,
+    EARTH_RADIUS, MOON_RADIUS, JUPITER_RADIUS,
     EARTH_MOON_DIST, EARTH_JUPITER_DIST,
     MISSION_DELTA_V,
 )
@@ -238,14 +238,14 @@ class PropulsionTradeStudy:
 
         if ptype == 'ion':
             # Spiral from Earth to Jupiter
-            r_start = R_EARTH + 400.0  # LEO
+            r_start = EARTH_RADIUS + 400.0  # LEO
             r_end = EARTH_JUPITER_DIST
             r = r_start + (r_end - r_start) * (theta / (2 * np.pi)) ** 0.7
             x = r * np.cos(theta * 5)
             y = r * np.sin(theta * 5)
         elif ptype == 'nuclear':
             # Faster Hohmann-like
-            r_start = R_EARTH + 400.0
+            r_start = EARTH_RADIUS + 400.0
             r_end = EARTH_JUPITER_DIST
             a = (r_start + r_end) / 2.0
             e = (r_end - r_start) / (r_end + r_start)
@@ -254,7 +254,7 @@ class PropulsionTradeStudy:
             y = r * np.sin(theta)
         else:
             # Standard Hohmann
-            r_start = R_EARTH + 400.0
+            r_start = EARTH_RADIUS + 400.0
             r_end = EARTH_JUPITER_DIST
             a = (r_start + r_end) / 2.0
             e = (r_end - r_start) / (r_end + r_start)

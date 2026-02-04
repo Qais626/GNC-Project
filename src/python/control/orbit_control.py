@@ -31,9 +31,9 @@ References
 import numpy as np
 from dataclasses import dataclass, field
 from core.constants import (
-    MU_EARTH,
-    MU_MOON,
-    MU_JUPITER,
+    EARTH_MU,
+    MOON_MU,
+    JUPITER_MU,
     G0,
     DEG2RAD,
     RAD2DEG,
