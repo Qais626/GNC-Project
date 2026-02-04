@@ -20,10 +20,10 @@ build/
 Thumbs.db
 
 # Output data (generated files)
-output/data/
-output/matlab/
-output/plots/
-output/trade_studies/
+output/
+
+# Claude Code
+.claude/
 
 # C++ build
 src/cpp/build/
