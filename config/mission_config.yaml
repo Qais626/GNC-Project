@@ -1,0 +1,283 @@
+# =============================================================================
+# GNC MISSION CONFIGURATION
+# =============================================================================
+# Miami-to-Moon-to-Jupiter-and-Back Mission Parameters
+# All units: SI (meters, seconds, kilograms, radians) unless noted
+# =============================================================================
+
+mission:
+  name: "Miami-Moon-Jupiter Round Trip"
+  description: "Launch from Miami, lunar orbit (2 rev), Jupiter orbit (3 rev), return to Miami"
+
+# --- Launch Site: Miami, Florida ---
+launch_site:
+  name: "Miami, FL"
+  latitude_deg: 25.7617
+  longitude_deg: -80.1918
+  altitude_m: 0.0
+  launch_azimuth_deg: 45.0  # Northeast launch toward orbital plane
+
+# --- Launch Vehicle (Rocket) ---
+launch_vehicle:
+  name: "Heavy Lifter Mk-IV"
+  stages:
+    - name: "Stage 1 - Boost"
+      dry_mass_kg: 25000.0
+      propellant_mass_kg: 400000.0
+      thrust_N: 7500000.0         # 7.5 MN sea-level thrust
+      isp_sl_s: 275.0             # Sea-level specific impulse
+      isp_vac_s: 310.0            # Vacuum specific impulse
+      burn_time_s: 170.0
+      diameter_m: 5.2
+      cd_0: 0.35                  # Zero-AoA drag coefficient
+      structural_factor: 0.06     # Structural mass fraction
+    - name: "Stage 2 - Upper"
+      dry_mass_kg: 4500.0
+      propellant_mass_kg: 80000.0
+      thrust_N: 1100000.0
+      isp_sl_s: 300.0
+      isp_vac_s: 348.0
+      burn_time_s: 380.0
+      diameter_m: 5.2
+      cd_0: 0.28
+      structural_factor: 0.05
+  fairing:
+    mass_kg: 2000.0
+    jettison_altitude_m: 110000.0  # Fairing jettison at 110 km
+
+# --- Space Vehicle ---
+spacecraft:
+  name: "Explorer-VII"
+  dry_mass_kg: 3200.0
+  propellant_mass_kg: 2800.0
+  total_mass_kg: 6000.0
+
+  # Geometry
+  dimensions_m: [3.5, 3.5, 4.2]   # x, y, z bounding box
+  cross_section_area_m2: 12.0      # For SRP and drag
+  reflectivity: 0.6                # Solar radiation pressure reflectivity
+
+  # Inertia tensor (body frame, kg*m^2)
+  inertia_tensor:
+    Ixx: 4500.0
+    Iyy: 4500.0
+    Izz: 2800.0
+    Ixy: -15.0   # Off-diagonal: structural asymmetry/defects
+    Ixz: 8.0
+    Iyz: -12.0
+
+  # Structural defects
+  structural:
+    flex_mode_freq_hz: [0.8, 2.3, 5.1]    # First 3 flex modes
+    flex_damping_ratios: [0.01, 0.015, 0.02]
+    mass_uncertainty_percent: 2.0           # +/- 2% mass knowledge error
+    cg_offset_m: [0.005, -0.003, 0.008]   # CG offset from geometric center
+    inertia_uncertainty_percent: 3.0
+
+  # Propulsion options (for trade study)
+  propulsion:
+    primary:
+      type: "bipropellant"       # MMH/N2O4
+      thrust_N: 440.0
+      isp_s: 316.0
+      mass_flow_rate_kgs: 0.142
+    rcs:
+      thrust_N: 22.0
+      isp_s: 290.0
+      num_thrusters: 16
+
+  # Actuators
+  actuators:
+    reaction_wheels:
+      count: 4                    # 3 + 1 redundant (pyramid config)
+      max_torque_Nm: 0.2
+      max_momentum_Nms: 50.0
+      wheel_inertia_kgm2: 0.05
+      friction_Nm: 0.0005        # Bearing friction
+      noise_Nm: 0.0001
+    cmgs:
+      count: 4
+      max_torque_Nm: 250.0
+      gimbal_rate_rads: 1.0
+    thrusters:
+      count: 16
+      min_impulse_bit_Ns: 0.05
+      max_thrust_N: 22.0
+
+  # Sensors
+  sensors:
+    imu:
+      gyro_bias_rads: 0.0001           # 0.1 mrad/s bias
+      gyro_noise_rads: 0.00003         # ARW
+      gyro_scale_factor_error: 0.0001
+      accel_bias_ms2: 0.0005
+      accel_noise_ms2: 0.0001
+      sample_rate_hz: 100.0
+    star_tracker:
+      accuracy_arcsec: 5.0
+      fov_deg: 20.0
+      sample_rate_hz: 10.0
+      max_angular_rate_degs: 2.0       # Fails above this rate
+      exclusion_angle_sun_deg: 25.0
+      exclusion_angle_moon_deg: 15.0
+    sun_sensor:
+      accuracy_deg: 0.5
+      fov_deg: 120.0
+      sample_rate_hz: 5.0
+    gps:  # Only valid near Earth
+      position_noise_m: 10.0
+      velocity_noise_ms: 0.1
+      max_altitude_m: 3000000.0        # GPS unusable above ~3000 km
+    deep_space_network:
+      range_noise_m: 5.0
+      range_rate_noise_ms: 0.001
+      angular_noise_arcsec: 50.0
+      comm_delay_factor: 1.0           # Light-time multiplier
+
+# --- Mission Phases ---
+mission_phases:
+  - name: "pre_launch"
+    duration_s: 10.0
+  - name: "stage1_ascent"
+    duration_s: 170.0
+  - name: "stage_separation"
+    duration_s: 5.0
+  - name: "stage2_ascent"
+    duration_s: 380.0
+  - name: "fairing_jettison"
+    duration_s: 2.0
+  - name: "parking_orbit"
+    altitude_km: 200.0
+    duration_s: 2700.0    # ~45 min coast
+  - name: "tli_burn"          # Trans-Lunar Injection
+    delta_v_ms: 3150.0
+  - name: "lunar_coast"
+    duration_s: 259200.0   # ~3 days
+  - name: "lunar_orbit_insertion"
+    target_altitude_km: 100.0
+    delta_v_ms: 850.0
+  - name: "lunar_orbit_1"
+    inclination_deg: 0.0   # Equatorial
+    revolutions: 1
+  - name: "lunar_inclination_change"
+    new_inclination_deg: 45.0
+    delta_v_ms: 200.0
+  - name: "lunar_orbit_2"
+    inclination_deg: 45.0
+    revolutions: 1
+  - name: "lunar_escape"
+    delta_v_ms: 900.0
+  - name: "earth_jupiter_transfer"
+    duration_s: 63072000.0  # ~2 years
+  - name: "jupiter_orbit_insertion"
+    target_altitude_km: 500000.0  # High Jupiter orbit
+    delta_v_ms: 2000.0
+  - name: "jupiter_orbits"
+    revolutions: 3
+  - name: "jupiter_escape"
+    delta_v_ms: 2200.0
+  - name: "jupiter_earth_return"
+    duration_s: 63072000.0
+  - name: "earth_reentry"
+    entry_altitude_km: 120.0
+    entry_velocity_ms: 12000.0
+  - name: "descent_landing"
+    target_lat_deg: 25.7617
+    target_lon_deg: -80.1918
+
+# --- Celestial Body Parameters ---
+celestial_bodies:
+  earth:
+    mu: 3.986004418e14        # m^3/s^2
+    radius_m: 6371000.0
+    J2: 0.00108263
+    J3: -2.5327e-6
+    rotation_rate_rads: 7.2921159e-5
+    atmosphere_scale_height_m: 8500.0
+    surface_density_kgm3: 1.225
+  moon:
+    mu: 4.9048695e12
+    radius_m: 1737400.0
+    sma_m: 384400000.0        # Semi-major axis of Moon orbit
+    orbital_period_s: 2360591.0
+    J2: 0.0002027
+  jupiter:
+    mu: 1.26686534e17
+    radius_m: 69911000.0
+    sma_m: 778.57e9           # From Sun
+    orbital_period_s: 3.7435577e8
+    J2: 0.01475
+    radiation_belt_inner_Rj: 1.5    # Jupiter radii
+    radiation_belt_outer_Rj: 20.0
+    radiation_dose_rate_rad_per_s: 0.01  # At inner belt
+  sun:
+    mu: 1.32712440018e20
+    luminosity_W: 3.828e26
+    solar_pressure_AU_Nm2: 4.56e-6
+
+# --- Simulation Settings ---
+simulation:
+  dt_s: 1.0                   # Nominal time step
+  dt_fine_s: 0.01             # Fine step for critical maneuvers
+  max_time_s: 200000000.0     # Max simulation time
+  gravity_model: "J2_plus_thirdbody"
+  include_srp: true
+  include_drag: true
+  include_radiation_damage: true
+  include_flex_modes: true
+  rng_seed: 42
+
+# --- Monte Carlo Settings ---
+monte_carlo:
+  num_runs: 100
+  dispersions:
+    mass_sigma_percent: 2.0
+    thrust_sigma_percent: 3.0
+    isp_sigma_percent: 1.5
+    attitude_init_sigma_deg: 0.5
+    position_init_sigma_m: 100.0
+    velocity_init_sigma_ms: 0.5
+    sensor_bias_sigma_factor: 1.5
+
+# --- Trade Study: Propulsion Types ---
+propulsion_trade:
+  options:
+    - name: "Chemical Bipropellant"
+      isp_s: 316.0
+      thrust_N: 440.0
+      mass_kg: 85.0
+      type: "chemical"
+    - name: "Solid Rocket Motor"
+      isp_s: 265.0
+      thrust_N: 50000.0
+      mass_kg: 120.0
+      type: "solid"
+    - name: "Ion Thruster (Xenon)"
+      isp_s: 3000.0
+      thrust_N: 0.5
+      mass_kg: 50.0
+      power_W: 5000.0
+      type: "electric"
+    - name: "Nuclear Thermal"
+      isp_s: 900.0
+      thrust_N: 25000.0
+      mass_kg: 2000.0
+      type: "nuclear"
+
+# --- Control Gains (initial) ---
+control:
+  attitude:
+    pid:
+      kp: [0.5, 0.5, 0.3]
+      ki: [0.01, 0.01, 0.005]
+      kd: [2.0, 2.0, 1.5]
+    lqr:
+      Q_diag: [100, 100, 100, 10, 10, 10]   # State weights
+      R_diag: [1, 1, 1]                       # Control weights
+    sliding_mode:
+      lambda_val: [0.8, 0.8, 0.6]
+      eta: [0.1, 0.1, 0.08]
+      boundary_layer: 0.05
+  pointing:
+    accuracy_required_deg: 0.1
+    rate_limit_degs: 5.0

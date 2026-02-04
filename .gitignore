@@ -1,0 +1,32 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output data (generated files)
+output/data/
+output/matlab/
+output/plots/
+output/trade_studies/
+
+# C++ build
+src/cpp/build/
+*.o
+*.so
+*.dylib

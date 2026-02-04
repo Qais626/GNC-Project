@@ -1,0 +1,60 @@
+Parameter,Value,Unit,Phase,Category,Description
+launch_latitude,25.7617,deg,pre_launch,Launch Site,Miami FL geodetic latitude (WGS84)
+launch_longitude,-80.1918,deg,pre_launch,Launch Site,Miami FL geodetic longitude (WGS84)
+launch_altitude,0.0,m,pre_launch,Launch Site,Launch pad elevation above sea level
+launch_azimuth,45.0,deg,pre_launch,Launch Site,Launch azimuth (northeast toward orbital plane)
+stage1_dry_mass,25000.0,kg,stage1_ascent,Vehicle Mass,Stage 1 structural mass without propellant
+stage1_propellant_mass,400000.0,kg,stage1_ascent,Vehicle Mass,Stage 1 propellant load
+stage1_thrust,7500000.0,N,stage1_ascent,Propulsion,Stage 1 sea-level thrust (7.5 MN)
+stage1_isp_sl,275.0,s,stage1_ascent,Propulsion,Stage 1 sea-level specific impulse
+stage1_isp_vac,310.0,s,stage1_ascent,Propulsion,Stage 1 vacuum specific impulse
+stage1_burn_time,170.0,s,stage1_ascent,Propulsion,Stage 1 nominal burn duration
+stage1_cd0,0.35,,stage1_ascent,Aerodynamics,Stage 1 zero-AoA drag coefficient
+stage2_dry_mass,4500.0,kg,stage2_ascent,Vehicle Mass,Stage 2 structural mass without propellant
+stage2_propellant_mass,80000.0,kg,stage2_ascent,Vehicle Mass,Stage 2 propellant load
+stage2_thrust,1100000.0,N,stage2_ascent,Propulsion,Stage 2 vacuum thrust
+stage2_isp_vac,348.0,s,stage2_ascent,Propulsion,Stage 2 vacuum specific impulse
+stage2_burn_time,380.0,s,stage2_ascent,Propulsion,Stage 2 nominal burn duration
+fairing_mass,2000.0,kg,stage2_ascent,Vehicle Mass,Payload fairing mass
+fairing_jettison_alt,110000.0,m,stage2_ascent,Aerodynamics,Fairing jettison altitude
+sc_dry_mass,3200.0,kg,all,Vehicle Mass,Explorer-VII spacecraft dry mass
+sc_propellant_mass,2800.0,kg,all,Vehicle Mass,Explorer-VII onboard propellant capacity
+sc_total_mass,6000.0,kg,all,Vehicle Mass,Explorer-VII total mass at separation
+sc_Ixx,4500.0,kg*m^2,all,Inertia,Spacecraft principal moment of inertia about X
+sc_Iyy,4500.0,kg*m^2,all,Inertia,Spacecraft principal moment of inertia about Y
+sc_Izz,2800.0,kg*m^2,all,Inertia,Spacecraft principal moment of inertia about Z
+sc_cross_section,12.0,m^2,all,Geometry,Spacecraft cross-sectional area for SRP and drag
+sc_reflectivity,0.6,,all,Geometry,Solar radiation pressure reflectivity coefficient
+primary_thrust,440.0,N,all,Propulsion,Main bipropellant engine thrust (MMH/N2O4)
+primary_isp,316.0,s,all,Propulsion,Main engine specific impulse
+rcs_thrust,22.0,N,all,Propulsion,Single RCS thruster force
+rcs_isp,290.0,s,all,Propulsion,RCS thruster specific impulse
+rcs_count,16,,all,Propulsion,Number of RCS thrusters
+rw_max_torque,0.2,Nm,all,Actuators,Reaction wheel maximum torque output
+rw_max_momentum,50.0,Nms,all,Actuators,Reaction wheel maximum angular momentum storage
+rw_count,4,,all,Actuators,Reaction wheels (3 + 1 redundant pyramid)
+cmg_max_torque,250.0,Nm,all,Actuators,Control moment gyroscope max torque
+parking_orbit_alt,200.0,km,parking_orbit,Orbit,LEO parking orbit altitude
+tli_delta_v,3150.0,m/s,tli_burn,Delta-V Budget,Trans-Lunar Injection burn delta-V
+lunar_orbit_alt,100.0,km,lunar_orbit_insertion,Orbit,Target lunar orbit altitude
+lunar_orbit_insertion_dv,850.0,m/s,lunar_orbit_insertion,Delta-V Budget,LOI burn delta-V
+lunar_inclination_change_dv,200.0,m/s,lunar_inclination_change,Delta-V Budget,Inclination change 0 to 45 deg
+lunar_escape_dv,900.0,m/s,lunar_escape,Delta-V Budget,Lunar escape burn delta-V
+jupiter_orbit_alt,500000.0,km,jupiter_orbit_insertion,Orbit,Target Jupiter orbit altitude
+jupiter_insertion_dv,2000.0,m/s,jupiter_orbit_insertion,Delta-V Budget,JOI burn delta-V
+jupiter_escape_dv,2200.0,m/s,jupiter_escape,Delta-V Budget,Jupiter escape burn delta-V
+earth_entry_alt,120.0,km,earth_reentry,Reentry,Earth atmospheric entry interface altitude
+earth_entry_velocity,12000.0,m/s,earth_reentry,Reentry,Earth reentry velocity magnitude
+gyro_bias,0.0001,rad/s,all,Sensors,IMU gyroscope bias instability
+gyro_noise,0.00003,rad/s,all,Sensors,IMU gyroscope angle random walk noise
+accel_bias,0.0005,m/s^2,all,Sensors,IMU accelerometer bias
+star_tracker_accuracy,5.0,arcsec,all,Sensors,Star tracker attitude accuracy (1-sigma)
+star_tracker_fov,20.0,deg,all,Sensors,Star tracker field of view half-angle
+gps_position_noise,10.0,m,all,Sensors,GPS position measurement noise (1-sigma)
+gps_max_altitude,3000000.0,m,all,Sensors,GPS maximum operational altitude
+dsn_range_noise,5.0,m,all,Sensors,Deep Space Network range measurement noise
+pointing_accuracy_req,0.1,deg,all,Control,Required pointing accuracy for maneuvers
+attitude_rate_limit,5.0,deg/s,all,Control,Maximum allowed spacecraft slew rate
+pid_kp,"[0.5, 0.5, 0.3]",,all,Control,PID proportional gains (3-axis)
+pid_ki,"[0.01, 0.01, 0.005]",,all,Control,PID integral gains (3-axis)
+pid_kd,"[2.0, 2.0, 1.5]",,all,Control,PID derivative gains (3-axis)
