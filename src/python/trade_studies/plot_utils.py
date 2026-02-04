@@ -29,7 +29,7 @@ class PlotStyle:
             'figure.figsize': (10, 6),
             'lines.linewidth': 1.5,
             'savefig.dpi': 150,
-            'savefig.bbox_inches': 'tight',
+            # bbox_inches set via savefig() call, not rcParams
             'axes.labelsize': 13,
             'axes.titlesize': 14,
             'legend.fontsize': 10,
