@@ -67,7 +67,7 @@ from dynamics.environment import (
 )
 from dynamics.spacecraft import Spacecraft
 from dynamics.orbital_mechanics import OrbitalMechanics, OrbitalState
-from dynamics.attitude_dynamics import AttitudeDynamics
+from dynamics.attitude_dynamics import AttitudeDynamics, AttitudeConfig, FlexMode, MomentumExchangeDevice
 from dynamics.launch_vehicle import LaunchVehicle
 
 from guidance.mission_planner import MissionPlanner, MissionPhase
@@ -90,7 +90,7 @@ from simulation.bayesian import BayesianEstimator
 from simulation.sil_interface import SILInterface
 
 from autonomy.anomaly_detection import SensorAnomalyDetector
-from autonomy.auto_trajectory import TrajectoryCorrector
+from autonomy.auto_trajectory import TrajectoryCorrector, SimpleTrajectoryEnv
 from autonomy.attitude_predictor import AttitudePredictor
 
 from trade_studies.propulsion_trade import PropulsionTradeStudy
@@ -128,7 +128,7 @@ def load_config(config_path: str = None) -> dict:
         Dictionary of mission configuration parameters
     """
     if config_path is None:
-        config_path = str(PROJECT_ROOT.parent / 'config' / 'mission_config.yaml')
+        config_path = str(PROJECT_ROOT.parent.parent / 'config' / 'mission_config.yaml')
 
     logger.info(f"Loading configuration from: {config_path}")
     with open(config_path, 'r') as f:
@@ -144,7 +144,7 @@ def setup_output_directories():
         'output/data', 'output/monte_carlo', 'output/benchmarks',
         'output/autonomy'
     ]
-    base = PROJECT_ROOT.parent
+    base = PROJECT_ROOT.parent.parent
     for d in dirs:
         (base / d).mkdir(parents=True, exist_ok=True)
     logger.info("Output directories ready")
@@ -182,10 +182,14 @@ def initialize_subsystems(config: dict) -> dict:
     # --- Environment Models ---
     logger.info("Creating environment models...")
     subsystems['atmosphere'] = ExponentialAtmosphere()
-    subsystems['gravity'] = GravityField()
+    subsystems['gravity'] = GravityField(
+        mu=EARTH_MU, body_radius=EARTH_RADIUS,
+        j2=config['celestial_bodies']['earth']['J2'],
+        j3=config['celestial_bodies']['earth']['J3']
+    )
     subsystems['srp'] = SolarRadiationPressure()
     subsystems['radiation'] = RadiationEnvironment()
-    subsystems['third_body'] = ThirdBodyPerturbation()
+    subsystems['third_body'] = ThirdBodyPerturbation(mu_third_body=MOON_MU)
 
     # --- Orbital Mechanics ---
     logger.info("Creating orbital mechanics engine...")
@@ -193,11 +197,30 @@ def initialize_subsystems(config: dict) -> dict:
 
     # --- Attitude Dynamics ---
     logger.info("Creating attitude dynamics engine...")
-    subsystems['attitude_dyn'] = AttitudeDynamics(
-        inertia=subsystems['spacecraft'].get_inertia(),
-        flex_modes=config['spacecraft']['structural']['flex_mode_freq_hz'],
-        flex_damping=config['spacecraft']['structural']['flex_damping_ratios']
+    sc_cfg = config['spacecraft']
+    inertia_cfg = sc_cfg['inertia_tensor']
+    inertia_matrix = np.array([
+        [inertia_cfg['Ixx'], inertia_cfg['Ixy'], inertia_cfg['Ixz']],
+        [inertia_cfg['Ixy'], inertia_cfg['Iyy'], inertia_cfg['Iyz']],
+        [inertia_cfg['Ixz'], inertia_cfg['Iyz'], inertia_cfg['Izz']],
+    ])
+    flex_freqs = sc_cfg['structural']['flex_mode_freq_hz']
+    flex_damps = sc_cfg['structural']['flex_damping_ratios']
+    flex_modes = [
+        FlexMode(
+            frequency_hz=f,
+            damping_ratio=d,
+            coupling_vector=np.array([0.1, 0.1, 0.05])
+        )
+        for f, d in zip(flex_freqs, flex_damps)
+    ]
+    att_config = AttitudeConfig(
+        inertia=inertia_matrix,
+        inertia_uncertainty=sc_cfg['structural']['inertia_uncertainty_percent'] / 100.0,
+        cg_offset=np.array(sc_cfg['structural']['cg_offset_m']),
+        flex_modes=flex_modes,
     )
+    subsystems['attitude_dyn'] = AttitudeDynamics(att_config)
 
     # --- Sensors ---
     logger.info("Creating sensor models...")
@@ -239,23 +262,38 @@ def initialize_subsystems(config: dict) -> dict:
 
     # --- Actuators ---
     logger.info("Creating actuator models...")
+    rw_cfg = config['spacecraft']['actuators']['reaction_wheels']
     subsystems['reaction_wheels'] = ReactionWheelArray(
-        config['spacecraft']['actuators']['reaction_wheels']
+        max_torque=rw_cfg['max_torque_Nm'],
+        max_momentum=rw_cfg['max_momentum_Nms'],
+        wheel_inertia=rw_cfg['wheel_inertia_kgm2'],
     )
+    thr_cfg = config['spacecraft']['actuators']['thrusters']
     subsystems['thrusters'] = ThrusterArray(
-        config['spacecraft']['actuators']['thrusters']
+        nominal_thrust=thr_cfg['max_thrust_N'],
+        isp=config['spacecraft']['propulsion']['rcs']['isp_s'],
     )
 
     # --- Controllers ---
     logger.info("Creating control systems...")
-    subsystems['attitude_control'] = AttitudeControlSystem(
-        config['control']['attitude']
-    )
+    ctrl_att = config['control']['attitude']
+    att_ctrl_cfg = {
+        'inertia': inertia_matrix.tolist(),
+        'pid_kp': ctrl_att['pid']['kp'],
+        'pid_ki': ctrl_att['pid']['ki'],
+        'pid_kd': ctrl_att['pid']['kd'],
+        'lqr_Q_diag': ctrl_att['lqr']['Q_diag'],
+        'lqr_R_diag': ctrl_att['lqr']['R_diag'],
+        'smc_lambda': ctrl_att['sliding_mode']['lambda_val'],
+        'smc_eta': max(ctrl_att['sliding_mode']['eta']),
+        'smc_boundary_layer': ctrl_att['sliding_mode']['boundary_layer'],
+    }
+    subsystems['attitude_control'] = AttitudeControlSystem(att_ctrl_cfg)
     subsystems['orbit_control'] = OrbitController()
 
     # --- Guidance ---
     logger.info("Creating guidance system...")
-    subsystems['mission_planner'] = MissionPlanner(config['mission_phases'])
+    subsystems['mission_planner'] = MissionPlanner()
     subsystems['trajectory_opt'] = TrajectoryOptimizer()
     subsystems['maneuver_planner'] = ManeuverPlanner()
 
@@ -267,7 +305,7 @@ def initialize_subsystems(config: dict) -> dict:
 
     # --- Data Structures ---
     subsystems['event_queue'] = EventPriorityQueue()
-    subsystems['state_history'] = StateHistory(max_size=100000, state_dim=13)
+    subsystems['state_history'] = StateHistory(capacity=100000, state_dim=13)
 
     logger.info("All subsystems initialized successfully")
     return subsystems
@@ -298,7 +336,8 @@ def run_simulation(config: dict, output_dir: str, quick_mode: bool = False):
     if quick_mode:
         config['simulation']['dt_s'] = 10.0       # Larger time step
         config['simulation']['dt_fine_s'] = 0.1
-        logger.info("Quick mode: dt=10s, reduced fidelity")
+        config['simulation']['max_time_s'] = 50000.0  # Limit to ~14 hours sim time
+        logger.info("Quick mode: dt=10s, max_time=50000s, reduced fidelity")
 
     # Initialize subsystems
     subsystems = initialize_subsystems(config)
@@ -425,7 +464,18 @@ def run_trade_studies(config: dict, output_dir: str):
 
     # --- Propulsion Trade Study ---
     logger.info("Running propulsion trade study...")
-    prop_trade = PropulsionTradeStudy(config['propulsion_trade'])
+    raw_opts = config['propulsion_trade'].get('options', [])
+    prop_options = [
+        {
+            'name': o['name'],
+            'isp': o.get('isp_s', o.get('isp', 300.0)),
+            'thrust': o.get('thrust_N', o.get('thrust', 1000.0)),
+            'engine_mass': o.get('mass_kg', o.get('engine_mass', 50.0)),
+            'type': o.get('type', 'chemical'),
+        }
+        for o in raw_opts
+    ] if raw_opts else None
+    prop_trade = PropulsionTradeStudy(prop_options)
     prop_trade.run_and_plot(trade_dir)
     logger.info("Propulsion trade study complete")
 
@@ -549,21 +599,20 @@ def run_autonomy_demo(config: dict, output_dir: str):
     # --- Trajectory Correction ---
     logger.info("Training trajectory corrector (RL)...")
     corrector = TrajectoryCorrector()
-    corrector.train(num_episodes=500)
+    traj_env = SimpleTrajectoryEnv()
+    metrics = corrector.train(env=traj_env, num_episodes=500)
+    logger.info(f"Training complete. Final reward: {metrics.episode_rewards[-1]:.2f}")
 
     # Test correction decision
-    correction = corrector.get_correction(
-        position_error=1000.0,  # 1 km error
-        velocity_error=0.5,     # 0.5 m/s error
-        fuel_remaining=0.8      # 80% fuel remaining
-    )
-    logger.info(f"Correction decision: {correction}")
+    state = traj_env.reset()
+    action = corrector.choose_action(state)
+    logger.info(f"Correction action for initial state: {action}")
 
     # --- Attitude Prediction ---
     logger.info("Training attitude predictor (neural net)...")
     predictor = AttitudePredictor(input_dim=10, prediction_horizon=10)
-    predictor.generate_training_data(num_samples=5000)
-    predictor.train(epochs=100)
+    X_train, y_train = predictor.generate_training_data(num_samples=5000)
+    predictor.train(X_train, y_train, epochs=100)
 
     logger.info("Autonomy demonstrations complete")
 
