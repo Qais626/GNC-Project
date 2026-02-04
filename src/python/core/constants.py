@@ -118,6 +118,16 @@ LIGHT_TIME_EARTH_MOON = MOON_SMA / SPEED_OF_LIGHT      # ~1.28 s
 LIGHT_TIME_EARTH_JUPITER_MIN = 588.0e9 / SPEED_OF_LIGHT  # ~33 min (closest)
 LIGHT_TIME_EARTH_JUPITER_MAX = 968.0e9 / SPEED_OF_LIGHT  # ~54 min (farthest)
 
+# Standard gravitational acceleration at sea level
+G0 = 9.80665                              # m/s^2
+
+# Approximate mean distances (for trade studies)
+EARTH_MOON_DIST = MOON_SMA                # ~384,400 km
+EARTH_JUPITER_DIST = JUPITER_SMA          # ~778.57 million km
+
+# Total mission delta-V budget (Miami-Moon-Jupiter-Miami)
+MISSION_DELTA_V = 15000.0                 # m/s (approximate total budget)
+
 
 def get_body_mu(body_name: str) -> float:
     """
