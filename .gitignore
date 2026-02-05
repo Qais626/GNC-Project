@@ -43,3 +43,11 @@ docs/*.lot
 docs/*.fls
 docs/*.fdb_latexmk
 docs/*.synctex.gz
+docs/*.nlo
+docs/*.nls
+docs/*.ilg
+
+# MATLAB/Simulink generated files
+simulink/*.slxc
+simulink/*.mat
+simulink/slprj/
