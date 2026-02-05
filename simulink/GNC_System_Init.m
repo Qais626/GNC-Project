@@ -22,7 +22,7 @@ Kd_x = 2 * zeta * wn * Ixx; % Derivative gain
 
 %% Actuator Parameters
 rw_tau = 0.02;       % Reaction wheel time constant [s]
-tau_max = 0.5;       % Max torque [N*m]
+tau_max = 5.0;       % Max torque [N*m] (sized for Ixx)
 
 %% Simulation Settings
 dt = 0.01;           % Time step [s]
