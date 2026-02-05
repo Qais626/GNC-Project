@@ -83,15 +83,15 @@ function build_gnc_model()
     add_block('simulink/Math Operations/Sum', [ctrlSys '/Theta_Err'], ...
               'Inputs', '+-', 'Position', [120 50 150 80]);
 
-    % PD gains
+    % PD gains (positive gains for stability)
     add_block('simulink/Math Operations/Gain', [ctrlSys '/Kp'], ...
-              'Gain', '-Kp_x', 'Position', [200 45 250 75]);
+              'Gain', 'Kp_x', 'Position', [200 45 250 75]);
     add_block('simulink/Math Operations/Gain', [ctrlSys '/Kd'], ...
-              'Gain', '-Kd_x', 'Position', [200 105 250 135]);
+              'Gain', 'Kd_x', 'Position', [200 105 250 135]);
 
-    % Sum PD
+    % Sum PD (Kp*error - Kd*omega for damping)
     add_block('simulink/Math Operations/Sum', [ctrlSys '/PD_Sum'], ...
-              'Inputs', '++', 'Position', [310 70 340 100]);
+              'Inputs', '+-', 'Position', [310 70 340 100]);
 
     % Saturation
     add_block('simulink/Discontinuities/Saturation', [ctrlSys '/Sat'], ...
