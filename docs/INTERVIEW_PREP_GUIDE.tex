@@ -1,0 +1,471 @@
+\documentclass[11pt,a4paper]{article}
+
+% ============================================================================
+% PACKAGES
+% ============================================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{fontawesome5}
+
+% ============================================================================
+% COLORS
+% ============================================================================
+\definecolor{primaryblue}{RGB}{46,134,171}
+\definecolor{darkblue}{RGB}{30,60,90}
+\definecolor{accentorange}{RGB}{241,143,1}
+\definecolor{successgreen}{RGB}{46,125,50}
+\definecolor{dangerred}{RGB}{199,62,29}
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+
+% ============================================================================
+% STYLING
+% ============================================================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primaryblue,
+    urlcolor=primaryblue,
+    citecolor=primaryblue,
+}
+
+% Headers and footers
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{darkblue}{\textbf{GNC Interview Prep Guide}}}
+\fancyhead[R]{\textcolor{darkblue}{\thepage}}
+\fancyfoot[C]{\textcolor{gray}{\small Miami $\rightarrow$ Moon $\rightarrow$ Jupiter $\rightarrow$ Miami}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+% Section formatting
+\titleformat{\section}
+    {\Large\bfseries\color{darkblue}}
+    {\thesection}{1em}{}[\titlerule]
+
+\titleformat{\subsection}
+    {\large\bfseries\color{primaryblue}}
+    {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{darkblue}}
+    {\thesubsubsection}{1em}{}
+
+% Code listings
+\lstset{
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    rulecolor=\color{codeframe},
+    numbers=none,
+    showstringspaces=false,
+    tabsize=4,
+    keywordstyle=\color{primaryblue}\bfseries,
+    commentstyle=\color{successgreen}\itshape,
+    stringstyle=\color{dangerred},
+}
+
+% Custom boxes
+\tcbset{
+    colback=codebg,
+    colframe=primaryblue,
+    fonttitle=\bfseries,
+    boxrule=0.5pt,
+    arc=2pt,
+}
+
+\newtcolorbox{keyequation}[1][]{
+    colback=blue!5,
+    colframe=primaryblue,
+    title=Key Equation,
+    #1
+}
+
+\newtcolorbox{interviewanswer}[1][]{
+    colback=green!5,
+    colframe=successgreen,
+    title=\faComments~Interview Answer,
+    #1
+}
+
+\newtcolorbox{errorbox}[1][]{
+    colback=red!5,
+    colframe=dangerred,
+    title=\faExclamationTriangle~Error \& Fix,
+    #1
+}
+
+% ============================================================================
+% DOCUMENT
+% ============================================================================
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    {\Huge\bfseries\color{darkblue} GNC Project\\[0.3cm]
+    Interview Preparation Guide}
+
+    \vspace{1cm}
+
+    {\Large\color{primaryblue} Complete Technical Deep-Dive}
+
+    \vspace{2cm}
+
+    \begin{tcolorbox}[colback=blue!5,colframe=primaryblue,width=0.8\textwidth]
+        \centering
+        \large
+        \textbf{Mission:} Miami $\rightarrow$ Moon (2 orbits) $\rightarrow$ Jupiter (3 orbits) $\rightarrow$ Miami\\[0.5em]
+        \textbf{Duration:} $\sim$4.1 years\\[0.5em]
+        \textbf{Total $\Delta V$:} $\sim$10.5 km/s\\[0.5em]
+        \textbf{Spacecraft Mass:} 6,000 kg
+    \end{tcolorbox}
+
+    \vspace{2cm}
+
+    {\large Languages \& Tools}\\[0.5em]
+    \begin{tabular}{cccc}
+        \textbf{Python} & \textbf{C++} & \textbf{MATLAB/Simulink} & \textbf{YAML}\\
+        $\sim$15,000 lines & $\sim$3,000 lines & Verification & Configuration
+    \end{tabular}
+
+    \vfill
+
+    {\color{gray}\today}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{Control Systems}
+% ============================================================================
+
+\subsection{PID Controller (Classical)}
+
+\textbf{File:} \texttt{control/attitude\_control.py} -- \texttt{PIDController} class
+
+\textbf{Purpose:} Three-axis attitude control with proportional, integral, and derivative terms.
+
+\begin{keyequation}
+\[
+\boldsymbol{\tau} = K_p \cdot \mathbf{e} + K_i \cdot \int \mathbf{e} \, dt + K_d \cdot \frac{d\mathbf{e}}{dt}
+\]
+\end{keyequation}
+
+\textbf{Special Features:}
+\begin{itemize}[noitemsep]
+    \item \textbf{Anti-windup:} Clamps integrator to prevent saturation
+    \item \textbf{Derivative filtering:} Low-pass filter on derivative to reduce noise
+    \item \textbf{Per-axis tuning:} Different gains for roll, pitch, yaw
+\end{itemize}
+
+\begin{interviewanswer}
+``I implemented a PID controller with anti-windup and derivative filtering because raw derivative amplifies high-frequency noise. The anti-windup prevents integrator saturation during large errors.''
+\end{interviewanswer}
+
+\subsection{LQR Controller (Optimal)}
+
+\textbf{File:} \texttt{control/attitude\_control.py} -- \texttt{LQRController} class
+
+\textbf{Purpose:} Minimizes a quadratic cost function to find optimal gains.
+
+\begin{keyequation}
+\[
+\text{Minimize: } J = \int_0^\infty \left( \mathbf{x}^T Q \mathbf{x} + \mathbf{u}^T R \mathbf{u} \right) dt
+\]
+\[
+\text{Feedback law: } \mathbf{u} = -K\mathbf{x}, \quad K = R^{-1}B^T P
+\]
+\end{keyequation}
+
+\textbf{Implementation Steps:}
+\begin{enumerate}[noitemsep]
+    \item Build linearized state-space model ($A$, $B$ matrices)
+    \item Solve the Continuous Algebraic Riccati Equation (CARE)
+    \item Compute optimal gain: $K = R^{-1}B^T P$
+\end{enumerate}
+
+\begin{interviewanswer}
+``LQR provides optimal full-state feedback. I solve the Riccati equation iteratively since we don't have scipy.linalg in flight software. The $Q$ matrix weights state errors, $R$ weights control effort---I tuned these for 0.1\textdegree~pointing with minimal fuel use.''
+\end{interviewanswer}
+
+\subsection{Sliding Mode Control (Robust)}
+
+\textbf{File:} \texttt{control/attitude\_control.py} -- \texttt{SlidingModeController} class
+
+\begin{keyequation}
+\[
+\mathbf{s} = \boldsymbol{\omega}_{err} + \Lambda \cdot \boldsymbol{\theta}_{err}
+\]
+\[
+\mathbf{u} = \mathbf{u}_{eq} + \mathbf{u}_{sw}, \quad \mathbf{u}_{sw} = -\eta \cdot \text{sat}(\mathbf{s}/\phi)
+\]
+\end{keyequation}
+
+The \texttt{sat()} function replaces \texttt{sgn()} to reduce chattering.
+
+\begin{interviewanswer}
+``Sliding mode is ideal for large-angle slews because it's inherently robust to bounded uncertainties. I use a boundary layer ($\phi$) to prevent chattering---without it, the actuators would oscillate at high frequency.''
+\end{interviewanswer}
+
+\subsection{MPC (Model Predictive Control)}
+
+\textbf{File:} \texttt{control/optimal\_control.py} -- \texttt{MPCController} class
+
+\textbf{Key Advantages:}
+\begin{itemize}[noitemsep]
+    \item Handles constraints (torque limits, rate limits)
+    \item Preview of reference trajectory
+    \item Receding horizon adapts to changes
+\end{itemize}
+
+\begin{interviewanswer}
+``MPC is the most flexible controller because it naturally handles constraints. I pre-compute the prediction matrices for efficiency. The receding horizon means we re-plan every step, making it robust to disturbances.''
+\end{interviewanswer}
+
+% ============================================================================
+\section{Navigation \& State Estimation}
+% ============================================================================
+
+\subsection{Extended Kalman Filter (EKF)}
+
+\textbf{File:} \texttt{navigation/ekf.py}
+
+\textbf{State Vector (15 states):}
+\[
+\mathbf{x} = \begin{bmatrix} \text{pos}(3) & \text{vel}(3) & \text{att\_err}(3) & \text{gyro\_bias}(3) & \text{accel\_bias}(3) \end{bmatrix}^T
+\]
+
+\subsubsection{Multiplicative Quaternion Error}
+
+\textbf{Why not put quaternion in state vector?}
+\begin{itemize}[noitemsep]
+    \item Quaternion has 4 elements but only 3 DOF
+    \item Unit-norm constraint violates Gaussian assumption
+    \item \textbf{Solution:} Estimate small-angle error (3 states), maintain reference quaternion separately
+\end{itemize}
+
+\subsubsection{Joseph Form Covariance Update}
+
+\begin{keyequation}
+\[
+P = (I - KH)P(I - KH)^T + KRK^T
+\]
+\end{keyequation}
+
+More numerically stable than $P = (I-KH)P$ for long-duration missions.
+
+\begin{interviewanswer}
+``I use the multiplicative quaternion formulation because it respects the unit-norm constraint. After each update, I reset the attitude error by folding it into the reference quaternion. The Joseph form covariance update prevents numerical issues during long-duration missions.''
+\end{interviewanswer}
+
+\subsection{Sensors Modeled}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Sensor} & \textbf{Accuracy} & \textbf{Use Case} \\
+\midrule
+IMU (gyro) & 0.1 mrad/s bias & Attitude rates (100 Hz) \\
+Star Tracker & 5 arcsec & Absolute attitude (10 Hz) \\
+Sun Sensor & 0.5\textdegree & Coarse attitude, eclipse detection \\
+GPS & 10 m / 0.1 m/s & Near-Earth navigation \\
+Deep Space Network & 5 m range & Jupiter cruise navigation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================================
+\section{Orbital Mechanics}
+% ============================================================================
+
+\subsection{Key Algorithms}
+
+\subsubsection{Hohmann Transfer}
+\begin{keyequation}
+\[
+\Delta V_1 = \sqrt{\frac{\mu}{r_1}} \left( \sqrt{\frac{2r_2}{r_1+r_2}} - 1 \right)
+\]
+\[
+\Delta V_2 = \sqrt{\frac{\mu}{r_2}} \left( 1 - \sqrt{\frac{2r_1}{r_1+r_2}} \right)
+\]
+\end{keyequation}
+
+\subsubsection{Bi-elliptic Transfer}
+Better than Hohmann when $r_2/r_1 > 11.94$
+
+\begin{interviewanswer}
+``I implemented Hohmann for simple orbit raising and Lambert for arbitrary two-point boundary value problems. The Lambert solver is essential for interplanetary trajectory design.''
+\end{interviewanswer}
+
+\subsection{RK4 Integrator (C++)}
+
+\textbf{File:} \texttt{dynamics\_engine.cpp}
+
+4th-order accuracy, 4 function evaluations per step:
+
+\begin{lstlisting}[language=C++]
+k1 = f(t, y)
+k2 = f(t + h/2, y + h*k1/2)
+k3 = f(t + h/2, y + h*k2/2)
+k4 = f(t + h, y + h*k3)
+y_next = y + (h/6)*(k1 + 2*k2 + 2*k3 + k4)
+\end{lstlisting}
+
+% ============================================================================
+\section{Real-Time Systems (C++)}
+% ============================================================================
+
+\subsection{Flight Computer Architecture}
+
+\textbf{File:} \texttt{flight\_computer.h}
+
+\subsubsection{Rate Monotonic Scheduling (RMS)}
+
+Tasks with shorter periods get higher priority. Optimal for fixed-priority periodic tasks.
+
+\textbf{Schedulability bound:} $U \leq n(2^{1/n} - 1)$
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Task} & \textbf{Rate} & \textbf{Priority} \\
+\midrule
+Control loop & 100 Hz & Highest \\
+Navigation & 10 Hz & Medium \\
+Guidance & 1 Hz & Lower \\
+Telemetry & 5 Hz & Lowest \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Triple Modular Redundancy (TMR)}
+
+Run computation 3 times, take majority vote. Protects against radiation-induced bit flips (SEU).
+
+\begin{interviewanswer}
+``I implemented rate-monotonic scheduling because it's provably optimal for periodic tasks. TMR provides radiation tolerance using COTS processors---we run critical calculations 3 times and vote.''
+\end{interviewanswer}
+
+\subsection{Memory Pool (Zero-Allocation)}
+
+\textbf{File:} \texttt{memory\_pool.h}
+
+\textbf{Why no malloc in real-time?}
+\begin{itemize}[noitemsep]
+    \item Non-deterministic timing
+    \item Fragmentation
+    \item Page faults
+\end{itemize}
+
+\begin{lstlisting}[language=C++]
+template<typename T, size_t N>
+class MemoryPool {
+    alignas(64) T blocks_[N];  // Cache-aligned
+    T* free_list_;             // Intrusive linked list
+};
+\end{lstlisting}
+
+\begin{interviewanswer}
+``Dynamic memory allocation is forbidden in flight software because malloc has non-deterministic timing. I use pre-allocated memory pools with O(1) allocate/free. The blocks are cache-line aligned for optimal performance.''
+\end{interviewanswer}
+
+% ============================================================================
+\section{Debugging \& Error Resolution}
+% ============================================================================
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 1: PD Controller Sign Error]
+\textbf{Symptom:} Attitude diverged---spacecraft spun out of control.
+
+\textbf{Root Cause:} Wrong quaternion error convention. Using $q_{err} = q_{current} \times q_{target}^{-1}$ instead of $q_{err} = q_{target} \times q_{current}^{-1}$.
+
+\textbf{Fix:} Standardized on $q_{err} = q_{target} \times q_{current}^{-1}$ with scalar-positive enforcement.
+\end{errorbox}
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 2: Quaternion Normalization Drift]
+\textbf{Symptom:} After many integration steps, quaternion norm drifted from 1.0.
+
+\textbf{Root Cause:} Numerical integration accumulates floating-point errors.
+
+\textbf{Fix:} Renormalize after every step + multiplicative EKF formulation.
+\end{errorbox}
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 3: Integrator Windup]
+\textbf{Symptom:} Controller output saturated and stayed saturated.
+
+\textbf{Root Cause:} Unbounded integrator accumulated huge value.
+
+\textbf{Fix:} Anti-windup clamping: \texttt{integral = clip(integral, -limit, limit)}
+\end{errorbox}
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 4: malloc() Timing Jitter]
+\textbf{Symptom:} Control loop timing varied from 8ms to 50ms.
+
+\textbf{Root Cause:} Dynamic allocation has non-deterministic timing.
+
+\textbf{Fix:} Pre-allocated memory pools, eliminated all dynamic allocation.
+\end{errorbox}
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 5: EKF Numerical Instability]
+\textbf{Symptom:} Covariance matrix became non-positive-definite after days.
+
+\textbf{Root Cause:} Standard update $P = (I-KH)P$ is numerically unstable.
+
+\textbf{Fix:} Joseph form: $P = (I-KH)P(I-KH)^T + KRK^T$
+\end{errorbox}
+
+\begin{errorbox}[title=\faExclamationTriangle~Error 6: Propellant Budget Exceeded]
+\textbf{Symptom:} Mission requires $\sim$10.5 km/s but only $\sim$2 km/s available.
+
+\textbf{Root Cause:} Direct transfer to Jupiter isn't mass-feasible with chemical propulsion.
+
+\textbf{Fix:} Proposed VEEGA gravity assists, documented constraint.
+\end{errorbox}
+
+% ============================================================================
+\section{Quick Reference Card}
+% ============================================================================
+
+\begin{tcolorbox}[colback=blue!5,colframe=primaryblue,title=Equations to Know]
+\begin{align*}
+\textbf{Rocket Equation:} \quad & \Delta V = I_{sp} \cdot g_0 \cdot \ln(m_0/m_f) \\[0.5em]
+\textbf{Vis-Viva:} \quad & v^2 = \mu\left(\frac{2}{r} - \frac{1}{a}\right) \\[0.5em]
+\textbf{Quaternion Kinematics:} \quad & \dot{q} = \frac{1}{2} q \otimes \omega_q \\[0.5em]
+\textbf{Euler's Equations:} \quad & I\dot{\omega} = \tau - \omega \times (I\omega) \\[0.5em]
+\textbf{Kalman Gain:} \quad & K = PH^T(HPH^T + R)^{-1}
+\end{align*}
+\end{tcolorbox}
+
+\vspace{1cm}
+
+\begin{center}
+\begin{tcolorbox}[colback=green!5,colframe=successgreen,width=0.8\textwidth]
+\centering
+\Large\bfseries
+Good Luck Tomorrow!\\[0.5em]
+\normalsize\normalfont
+Remember: You built this. You understand it. You debugged it.\\
+\textbf{Be confident.}
+\end{tcolorbox}
+\end{center}
+
+\end{document}

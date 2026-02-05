@@ -31,9 +31,11 @@ src/cpp/build/
 *.so
 *.dylib
 
-# LaTeX report (keep local only)
-docs/*.tex
-docs/*.pdf
+# LaTeX report (keep local only, except interview prep)
+docs/GNC_*.tex
+docs/GNC_*.pdf
+!docs/INTERVIEW_PREP_GUIDE.tex
+!docs/INTERVIEW_PREP_GUIDE.pdf
 docs/*.aux
 docs/*.log
 docs/*.out

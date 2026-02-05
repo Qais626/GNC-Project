@@ -18,24 +18,96 @@ import os
 # ---------------------------------------------------------------------------
 
 class PlotStyle:
-    """Centralised styling and figure management for all project plots."""
+    """Centralised styling and figure management for all project plots.
+
+    Professional publication-quality styling with:
+    - Clean, modern color palette (colorblind-friendly)
+    - Proper typography and spacing
+    - High-DPI output for print and presentations
+    - Consistent styling across all plots
+    """
+
+    # Professional color palette (colorblind-friendly)
+    COLORS = {
+        'primary': '#2E86AB',      # Steel blue
+        'secondary': '#A23B72',    # Magenta
+        'accent1': '#F18F01',      # Orange
+        'accent2': '#C73E1D',      # Red
+        'accent3': '#3B1F2B',      # Dark purple
+        'success': '#2E7D32',      # Green
+        'warning': '#F57C00',      # Amber
+        'info': '#1976D2',         # Blue
+        'neutral': '#546E7A',      # Blue grey
+        'light': '#ECEFF1',        # Light grey
+    }
+
+    # Color sequences for multi-line plots
+    PALETTE = ['#2E86AB', '#F18F01', '#2E7D32', '#C73E1D', '#7B1FA2', '#00838F']
 
     @staticmethod
     def setup_style():
         """Set matplotlib rcParams for publication-quality figures."""
         plt.rcParams.update({
-            'font.size': 12,
-            'axes.grid': True,
-            'figure.figsize': (10, 6),
-            'lines.linewidth': 1.5,
-            'savefig.dpi': 150,
-            # bbox_inches set via savefig() call, not rcParams
-            'axes.labelsize': 13,
+            # Typography
+            'font.family': 'sans-serif',
+            'font.sans-serif': ['Helvetica Neue', 'Arial', 'DejaVu Sans'],
+            'font.size': 11,
+            'axes.labelsize': 12,
             'axes.titlesize': 14,
+            'axes.titleweight': 'bold',
             'legend.fontsize': 10,
-            'xtick.labelsize': 11,
-            'ytick.labelsize': 11,
-            'grid.alpha': 0.35,
+            'xtick.labelsize': 10,
+            'ytick.labelsize': 10,
+
+            # Figure settings
+            'figure.figsize': (10, 6),
+            'figure.dpi': 100,
+            'figure.facecolor': 'white',
+            'figure.edgecolor': 'white',
+            'savefig.dpi': 300,
+            'savefig.facecolor': 'white',
+            'savefig.edgecolor': 'none',
+            'savefig.bbox': 'tight',
+            'savefig.pad_inches': 0.1,
+
+            # Axes styling
+            'axes.facecolor': 'white',
+            'axes.edgecolor': '#333333',
+            'axes.linewidth': 1.0,
+            'axes.grid': True,
+            'axes.axisbelow': True,
+            'axes.spines.top': False,
+            'axes.spines.right': False,
+            'axes.prop_cycle': plt.cycler(color=PlotStyle.PALETTE),
+
+            # Grid styling
+            'grid.color': '#E0E0E0',
+            'grid.linestyle': '-',
+            'grid.linewidth': 0.5,
+            'grid.alpha': 0.7,
+
+            # Line styling
+            'lines.linewidth': 2.0,
+            'lines.markersize': 6,
+            'lines.markeredgewidth': 1.5,
+
+            # Legend styling
+            'legend.frameon': True,
+            'legend.framealpha': 0.95,
+            'legend.facecolor': 'white',
+            'legend.edgecolor': '#CCCCCC',
+            'legend.borderpad': 0.5,
+            'legend.labelspacing': 0.4,
+
+            # Tick styling
+            'xtick.direction': 'out',
+            'ytick.direction': 'out',
+            'xtick.major.size': 5,
+            'ytick.major.size': 5,
+            'xtick.minor.size': 3,
+            'ytick.minor.size': 3,
+            'xtick.major.width': 1.0,
+            'ytick.major.width': 1.0,
         })
 
     @staticmethod
@@ -59,12 +131,16 @@ class PlotStyle:
         return fig, axes
 
     @staticmethod
-    def save_figure(fig, filepath, dpi=150):
-        """Save *fig* to *filepath*, creating directories as needed."""
+    def save_figure(fig, filepath, dpi=300):
+        """Save *fig* to *filepath*, creating directories as needed.
+
+        Uses high DPI (300) for print-quality output.
+        """
         directory = os.path.dirname(filepath)
         if directory:
             os.makedirs(directory, exist_ok=True)
-        fig.savefig(filepath, dpi=dpi)
+        fig.savefig(filepath, dpi=dpi, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
         plt.close(fig)
 
     @staticmethod
