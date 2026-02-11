@@ -1,6 +1,6 @@
 # Mission Timing & Delta-V Budget Analysis
 
-## Miami → Moon → Jupiter → Miami Mission Profile
+## KSC → Moon → Jupiter → KSC Mission Profile
 
 ### Executive Summary
 
@@ -14,7 +14,7 @@ After detailed analysis, the **mission duration of ~4.1 years** is achievable bu
 
 | Event | Time | Duration | Delta-V |
 |-------|------|----------|---------|
-| Launch (Miami) | T+0 | - | - |
+| Launch (KSC) | T+0 | - | - |
 | Stage 1 Burn | T+0 to T+170s | 170 s | ~3,500 m/s |
 | Stage Separation | T+170s | 5 s | - |
 | Stage 2 Burn | T+175s to T+555s | 380 s | ~4,200 m/s |

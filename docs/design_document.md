@@ -2,8 +2,8 @@
 
 ## 1. Mission Overview
 
-**Mission Name:** Miami-Moon-Jupiter Round Trip
-**Objective:** Launch from Miami, FL, orbit the Moon (2 revolutions with inclination change), transfer to Jupiter, orbit Jupiter (3 revolutions), return and land in Miami.
+**Mission Name:** KSC-Moon-Jupiter Round Trip
+**Objective:** Launch from Kennedy Space Center, FL, orbit the Moon (2 revolutions with inclination change), transfer to Jupiter, orbit Jupiter (3 revolutions), return and land at Kennedy Space Center.
 
 ### 1.1 Mission Phases
 
@@ -27,7 +27,7 @@
 | 16 | Jupiter Escape | Escape burn from Jupiter | Begin return |
 | 17 | Jupiter-Earth Return | ~2 year cruise | Return navigation |
 | 18 | Earth Reentry | Atmospheric entry at ~12 km/s | Heat shield, blackout |
-| 19 | Descent & Landing | Final approach to Miami | Precision landing |
+| 19 | Descent & Landing | Final approach to KSC | Precision landing |
 
 ### 1.2 Delta-V Budget (Estimated)
 

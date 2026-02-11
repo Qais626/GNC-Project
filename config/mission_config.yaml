@@ -1,20 +1,20 @@
 # =============================================================================
 # GNC MISSION CONFIGURATION
 # =============================================================================
-# Miami-to-Moon-to-Jupiter-and-Back Mission Parameters
+# KSC-to-Moon-to-Jupiter-and-Back Mission Parameters
 # All units: SI (meters, seconds, kilograms, radians) unless noted
 # =============================================================================
 
 mission:
-  name: "Miami-Moon-Jupiter Round Trip"
-  description: "Launch from Miami, lunar orbit (2 rev), Jupiter orbit (3 rev), return to Miami"
+  name: "KSC-Moon-Jupiter Round Trip"
+  description: "Launch from Kennedy Space Center, lunar orbit (2 rev), Jupiter orbit (3 rev), return to KSC"
 
-# --- Launch Site: Miami, Florida ---
+# --- Launch Site: Kennedy Space Center, Florida ---
 launch_site:
-  name: "Miami, FL"
-  latitude_deg: 25.7617
-  longitude_deg: -80.1918
-  altitude_m: 0.0
+  name: "Kennedy Space Center, FL"
+  latitude_deg: 28.5721
+  longitude_deg: -80.6480
+  altitude_m: 3.0
   launch_azimuth_deg: 45.0  # Northeast launch toward orbital plane
 
 # --- Launch Vehicle (Rocket) ---
@@ -182,8 +182,8 @@ mission_phases:
     entry_altitude_km: 120.0
     entry_velocity_ms: 12000.0
   - name: "descent_landing"
-    target_lat_deg: 25.7617
-    target_lon_deg: -80.1918
+    target_lat_deg: 28.5721
+    target_lon_deg: -80.6480
 
 # --- Celestial Body Parameters ---
 celestial_bodies:

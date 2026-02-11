@@ -1,7 +1,7 @@
 Parameter,Value,Unit,Phase,Category,Description
-launch_latitude,25.7617,deg,pre_launch,Launch Site,Miami FL geodetic latitude (WGS84)
-launch_longitude,-80.1918,deg,pre_launch,Launch Site,Miami FL geodetic longitude (WGS84)
-launch_altitude,0.0,m,pre_launch,Launch Site,Launch pad elevation above sea level
+launch_latitude,28.5721,deg,pre_launch,Launch Site,Kennedy Space Center FL geodetic latitude (WGS84)
+launch_longitude,-80.6480,deg,pre_launch,Launch Site,Kennedy Space Center FL geodetic longitude (WGS84)
+launch_altitude,3.0,m,pre_launch,Launch Site,Launch pad elevation above sea level
 launch_azimuth,45.0,deg,pre_launch,Launch Site,Launch azimuth (northeast toward orbital plane)
 stage1_dry_mass,25000.0,kg,stage1_ascent,Vehicle Mass,Stage 1 structural mass without propellant
 stage1_propellant_mass,400000.0,kg,stage1_ascent,Vehicle Mass,Stage 1 propellant load

@@ -1,7 +1,7 @@
 -- =============================================================================
 -- GNC MISSION TELEMETRY DATABASE SCHEMA
 -- =============================================================================
--- SQLite-compatible schema for the Miami-Moon-Jupiter Round Trip mission.
+-- SQLite-compatible schema for the KSC-Moon-Jupiter Round Trip mission.
 -- Stores telemetry, sensor readings, control commands, maneuvers, anomalies,
 -- phase transitions, and Monte Carlo analysis results.
 --
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS monte_carlo_results (
     max_pointing_error  REAL    NOT NULL,        -- Peak pointing error (deg)
     landing_lat         REAL,                    -- Final landing latitude (deg)
     landing_lon         REAL,                    -- Final landing longitude (deg)
-    landing_error_m     REAL,                    -- Miss distance from Miami (m)
+    landing_error_m     REAL,                    -- Miss distance from KSC (m)
     success             INTEGER NOT NULL DEFAULT 1  -- 1 = success, 0 = failure
 );
 
@@ -293,9 +293,9 @@ ORDER BY pt1.mission_id, pt1.transition_time;
 
 INSERT INTO mission_info (name, description, start_time, end_time, status)
 VALUES (
-    'Miami-Moon-Jupiter Round Trip v1',
-    'Primary simulation: Launch from Miami, 2 lunar orbits (equatorial + 45-deg inclined), '
-    || '3 Jupiter orbits, return to Miami. Chemical bipropellant propulsion.',
+    'KSC-Moon-Jupiter Round Trip v1',
+    'Primary simulation: Launch from Kennedy Space Center, 2 lunar orbits (equatorial + 45-deg inclined), '
+    || '3 Jupiter orbits, return to KSC. Chemical bipropellant propulsion.',
     0.0,
     200000000.0,
     'planned'
@@ -304,7 +304,7 @@ VALUES (
 INSERT INTO mission_info (name, description, start_time, end_time, status)
 VALUES (
     'Lunar-Only Test Run',
-    'Abbreviated mission: Launch from Miami, LEO parking orbit, TLI, 2 lunar orbits, '
+    'Abbreviated mission: Launch from Kennedy Space Center, LEO parking orbit, TLI, 2 lunar orbits, '
     || 'and return. Used for navigation filter validation.',
     0.0,
     1500000.0,

@@ -10,7 +10,7 @@ function build_gnc_model()
     clc;
     fprintf('========================================\n');
     fprintf('  GNC Simulink Model Builder\n');
-    fprintf('  Miami-Moon-Jupiter Mission\n');
+    fprintf('  KSC-Moon-Jupiter Mission\n');
     fprintf('========================================\n\n');
 
     modelName = 'GNC_System';

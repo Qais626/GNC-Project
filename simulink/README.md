@@ -1,6 +1,6 @@
 # GNC Simulink Model
 
-## Miami-Moon-Jupiter Round Trip Mission
+## KSC-Moon-Jupiter Round Trip Mission
 
 This directory contains a complete Simulink model for the spacecraft Guidance, Navigation, and Control (GNC) system.
 
