@@ -11,9 +11,10 @@ __pycache__/
 dist/
 build/
 
-# IDE
+# IDE and tooling
 .vscode/
 .idea/
+.claude/
 
 # OS
 .DS_Store
@@ -22,20 +23,15 @@ Thumbs.db
 # Output data (generated files)
 output/
 
-# Tooling metadata
-.claude/
-
 # Flight software build
 src/fsw/build/
 *.o
 *.so
 *.dylib
 
-# LaTeX report (keep local only, except interview prep)
-docs/GNC_*.tex
-docs/GNC_*.pdf
-!docs/INTERVIEW_PREP_GUIDE.tex
-!docs/INTERVIEW_PREP_GUIDE.pdf
+# LaTeX (keep local only)
+docs/*.tex
+docs/*.pdf
 docs/*.aux
 docs/*.log
 docs/*.out
