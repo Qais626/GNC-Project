@@ -8,7 +8,7 @@ control modes, sensor configurations, target attitudes, and transition
 conditions.
 
 The mission profile:
-    1. Launch from Miami on a two-stage rocket
+    1. Launch from Kennedy Space Center on a two-stage rocket
     2. Parking orbit around Earth
     3. Trans-Lunar Injection (TLI) burn
     4. Lunar operations (orbit, inclination change)

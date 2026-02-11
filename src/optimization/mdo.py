@@ -3,8 +3,8 @@
 GNC PROJECT - Multidisciplinary Design Optimization (MDO) Framework
 ===============================================================================
 Comprehensive MDO framework that simultaneously optimizes across multiple
-coupled disciplines for the Miami -> Moon (2 orbits) -> Jupiter (3 orbits)
--> return to Miami spacecraft mission.
+coupled disciplines for the KSC -> Moon (2 orbits) -> Jupiter (3 orbits)
+-> return to KSC spacecraft mission.
 
 Disciplines Modeled
 -------------------
@@ -935,7 +935,7 @@ class TrajectoryDiscipline(DisciplineModel):
 
     Mission legs
     ------------
-        1. Earth (Miami) -> Moon                  (TLI + LOI)
+        1. Earth (KSC) -> Moon                     (TLI + LOI)
         2. Moon orbit phase -- 2 revolutions      (station-keeping)
         3. Moon -> Jupiter transfer                (lunar escape + deep space)
         4. Jupiter orbit phase -- 3 revolutions   (JOI + orbit maintenance)
@@ -2023,7 +2023,7 @@ if __name__ == "__main__":
 
     print("=" * 72)
     print("  GNC PROJECT - Multidisciplinary Design Optimization")
-    print("  Mission: Miami -> Moon (2 orbits) -> Jupiter (3 orbits) -> Miami")
+    print("  Mission: KSC -> Moon (2 orbits) -> Jupiter (3 orbits) -> KSC")
     print("=" * 72)
 
     # --- Instantiate all disciplines ---

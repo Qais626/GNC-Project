@@ -1,10 +1,10 @@
 # GNC Space Mission Simulation
 
-**Guidance, Navigation, and Control (GNC) System for a Miami-Moon-Jupiter Round Trip Mission**
+**Guidance, Navigation, and Control (GNC) System for a KSC-Moon-Jupiter Round Trip Mission**
 
 A multi-fidelity spacecraft simulation implementing the full GNC pipeline for an interplanetary
-round trip mission: launch from Miami, Florida, transit to and orbit the Moon (2 revolutions),
-transit to and orbit Jupiter (3 revolutions), and return to a landing at the Miami launch site.
+round trip mission: launch from Kennedy Space Center, Florida, transit to and orbit the Moon (2 revolutions),
+transit to and orbit Jupiter (3 revolutions), and return to a landing at the Kennedy Space Center launch site.
 The project spans Python for high-level simulation and analysis, C++ for real-time embedded
 flight software prototyping, MATLAB for validation and visualization, and SQLite for mission
 telemetry storage.
@@ -18,7 +18,7 @@ The **Explorer-VII** spacecraft executes the following mission profile aboard th
 
 | Phase                     | Description                                             | Key Parameter            |
 |---------------------------|---------------------------------------------------------|--------------------------|
-| Pre-Launch                | Countdown and system checks at Miami pad                | Lat 25.76 N, Lon 80.19 W|
+| Pre-Launch                | Countdown and system checks at KSC pad                  | Lat 28.57 N, Lon 80.65 W|
 | Stage 1 Ascent            | Boost phase, 7.5 MN thrust, 170 s burn                 | Isp = 275/310 s          |
 | Stage Separation          | Stage 1 jettison                                        | 5 s coast                |
 | Stage 2 Ascent            | Upper stage burn, 380 s                                 | Isp = 348 s (vac)        |
@@ -35,7 +35,7 @@ The **Explorer-VII** spacecraft executes the following mission profile aboard th
 | Jupiter Escape            | Departure burn, delta-V = 2200 m/s                      | Return to Earth          |
 | Jupiter-Earth Return      | ~2 year heliocentric cruise                             | Deep space navigation    |
 | Earth Re-Entry            | Atmospheric entry at 12 km/s, 120 km altitude           | High thermal loads       |
-| Descent and Landing       | Guided descent to Miami landing site                    | Target: 25.76N, 80.19W  |
+| Descent and Landing       | Guided descent to KSC landing site                      | Target: 28.57N, 80.65W  |
 
 **Total mission delta-V budget: ~12,450 m/s**
 
@@ -69,22 +69,29 @@ GNC Project/
 |   |-- run_tests.sh               # Test runner with coverage reporting
 |
 |-- src/
-|   |-- python/
-|   |   |-- core/                  # Constants, quaternion math, data structures
-|   |   |-- dynamics/              # Spacecraft and environment models
-|   |   |-- guidance/              # Trajectory optimization and mission planning
-|   |   |-- navigation/            # Sensor models and state estimation
-|   |   |-- control/               # Attitude control laws and actuator models
-|   |   |-- autonomy/              # Fault detection and autonomous operations
-|   |   |-- performance/           # Benchmarking and profiling tools
-|   |   |-- database/              # SQLite telemetry database interface
+|   |-- core/                      # Constants, quaternion math, data structures
+|   |-- dynamics/                  # Spacecraft and environment models
+|   |-- guidance/                  # Trajectory optimization and mission planning
+|   |-- navigation/                # Sensor models and state estimation
+|   |-- control/                   # Attitude control laws and actuator models
+|   |-- simulation/                # Simulation engine and Monte Carlo
+|   |-- autonomy/                  # Fault detection and autonomous operations
+|   |-- trade_studies/             # Design trade study analysis
+|   |-- optimization/              # Trajectory and MDO optimization
+|   |-- performance/               # Benchmarking and profiling tools
+|   |-- database/                  # SQLite telemetry database interface
+|   |-- visualization/             # Trajectory plotting and visualization
+|   |-- tests/                     # Unit and integration tests
+|   |-- main.py                    # Main simulation entry point
 |   |
-|   |-- cpp/
-|       |-- CMakeLists.txt         # Build configuration for real-time C++ module
-|       |-- include/               # C++ headers (memory pool, ring buffer, etc.)
-|       |-- src/                   # C++ source files
-|
-|-- tests/                         # Unit and integration tests
+|   |-- fsw/                       # C++ real-time flight software
+|   |   |-- CMakeLists.txt         # Build configuration
+|   |   |-- include/               # C++ headers (memory pool, ring buffer, etc.)
+|   |   |-- src/                   # C++ source files
+|   |
+|   |-- tools/                     # MATLAB analysis and validation tools
+|       |-- matlab/                # Control design, plotting, trajectory analysis
+|       |-- simulink/              # Simulink attitude control model
 |
 |-- README.md                      # This file
 ```
@@ -131,8 +138,8 @@ pip install numpy scipy matplotlib pandas pyyaml scikit-learn pytest pytest-cov
 # Create output directories
 mkdir -p output/{plots,trade_studies,matlab,data}
 
-# Build C++ module (optional)
-cd src/cpp
+# Build C++ flight software module (optional)
+cd src/fsw
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
@@ -157,13 +164,13 @@ trade studies, Monte Carlo analysis (10 runs), performance benchmarks, and unit 
 ```bash
 # Activate environment first
 source venv/bin/activate
-export PYTHONPATH=src/python:$PYTHONPATH
+export PYTHONPATH=src:$PYTHONPATH
 
-# Run specific Python modules
-python3 src/python/main.py                          # Main simulation
-python3 src/python/simulation/monte_carlo.py        # Monte Carlo analysis
-python3 src/python/trade_studies/propulsion_trade.py # Propulsion trade study
-python3 src/python/performance/benchmark.py          # Performance benchmarks
+# Run specific modules
+python3 src/main.py                          # Main simulation
+python3 src/simulation/monte_carlo.py        # Monte Carlo analysis
+python3 src/trade_studies/propulsion_trade.py # Propulsion trade study
+python3 src/performance/benchmark.py          # Performance benchmarks
 ```
 
 ### Tests
@@ -172,7 +179,7 @@ python3 src/python/performance/benchmark.py          # Performance benchmarks
 ./scripts/run_tests.sh
 
 # Or directly with pytest
-python3 -m pytest tests/ -v --cov=src/python
+python3 -m pytest src/tests/ -v --cov=src
 ```
 
 ---
@@ -197,7 +204,7 @@ python3 -m pytest tests/ -v --cov=src/python
 
 ## Module Descriptions
 
-### Core (`src/python/core/`)
+### Core (`src/core/`)
 
 Foundation layer providing physical and astronomical constants (Earth, Moon, Jupiter, Sun
 gravitational parameters, radii, J2 coefficients), quaternion mathematics for attitude
@@ -207,7 +214,7 @@ state history, KD-trees for spatial queries, double-buffered telemetry streams, 
 graphs with Dijkstra pathfinding, and dynamic programming tables for trajectory cost-to-go
 computation).
 
-### Dynamics (`src/python/dynamics/`)
+### Dynamics (`src/dynamics/`)
 
 Physical models for the spacecraft and its environment. The spacecraft model tracks mass
 properties (with fuel depletion), inertia tensor (with structural defects and CG offsets), and
@@ -216,7 +223,7 @@ perturbations from the Sun, Moon, and Jupiter, exponential atmospheric drag, sol
 pressure, and Jupiter radiation belt dosimetry. Attitude dynamics are propagated using quaternion
 kinematics with Euler's rotational equations of motion.
 
-### Guidance (`src/python/guidance/`)
+### Guidance (`src/guidance/`)
 
 Trajectory optimization and mission planning. Includes a mission phase sequencer that manages
 transitions through the 18+ mission phases, a maneuver planner that computes Hohmann transfers,
@@ -224,7 +231,7 @@ bi-elliptic transfers, plane changes, and powered descent profiles, and a trajec
 that uses scipy.optimize to minimize delta-V budgets subject to orbital constraints. The Lambert
 solver handles interplanetary transfer orbit design for the Earth-Jupiter legs.
 
-### Navigation (`src/python/navigation/`)
+### Navigation (`src/navigation/`)
 
 Sensor models and state estimation. Five sensor types are modeled with realistic error budgets:
 IMU (gyro bias drift, angle random walk, accelerometer noise), star tracker (accuracy, FOV,
@@ -233,7 +240,7 @@ limits), and Deep Space Network (range, range-rate, angular measurements with li
 State estimation combines these measurements through an Extended Kalman Filter (EKF) for
 orbit determination and attitude determination.
 
-### Control (`src/python/control/`)
+### Control (`src/control/`)
 
 Attitude control laws and actuator models. Implements three control algorithms -- PID, LQR
 (Linear Quadratic Regulator), and sliding mode control -- selectable per mission phase. Actuator
@@ -241,7 +248,7 @@ models include reaction wheels (4-wheel pyramid configuration with momentum satu
 desaturation logic), control moment gyroscopes (CMGs), and RCS thrusters with minimum impulse
 bit constraints. The controller manages momentum dumping, slew maneuvers, and fine pointing.
 
-### Simulation (`src/python/simulation/`)
+### Simulation (`src/simulation/`)
 
 The simulation engine that ties all subsystems together. Runs the main time loop with
 configurable step sizes (1 s nominal, 0.01 s for critical maneuvers), manages phase transitions,
@@ -249,7 +256,7 @@ and orchestrates the guidance-navigation-control cycle. The Monte Carlo module r
 simulations with randomized initial conditions, sensor biases, thrust magnitudes, and Isp values
 to characterize mission success probability and sensitivity to uncertainties.
 
-### Trade Studies (`src/python/trade_studies/`)
+### Trade Studies (`src/trade_studies/`)
 
 Parametric analysis comparing design alternatives. The propulsion trade study evaluates four
 engine options (chemical bipropellant, solid rocket motor, xenon ion thruster, nuclear thermal)
@@ -257,7 +264,7 @@ across metrics of total fuel mass, trip time, thrust-to-weight ratio, and comple
 trade studies evaluate navigation accuracy as a function of sensor suite configuration. Results
 are exported as comparison tables and plots to `output/trade_studies/`.
 
-### Autonomy (`src/python/autonomy/`)
+### Autonomy (`src/autonomy/`)
 
 Fault detection, isolation, and recovery (FDIR) capabilities. Uses scikit-learn Isolation Forest
 for anomaly detection on sensor telemetry streams, identifying off-nominal readings from sensor
@@ -265,14 +272,14 @@ degradation, environmental transients, or hardware faults. Includes rule-based l
 autonomous mode transitions (e.g., safe mode entry on persistent anomalies) and sensor
 reconfiguration when primary sensors fail.
 
-### Performance (`src/python/performance/`)
+### Performance (`src/performance/`)
 
 Benchmarking and profiling tools that measure execution time and memory usage of each subsystem.
 Compares Python simulation speed against the C++ real-time module to quantify the performance
 gap and validate that the C++ implementation meets real-time constraints. Generates timing
 reports and identifies computational bottlenecks for optimization.
 
-### Database (`src/python/database/`)
+### Database (`src/database/`)
 
 SQLite-backed telemetry storage using the schema defined in `database/schema.sql`. The
 `TelemetryDatabase` class provides a pandas-integrated interface for inserting individual records
@@ -280,7 +287,7 @@ SQLite-backed telemetry storage using the schema defined in `database/schema.sql
 mission phase, and sensor type, with views for mission summaries and phase duration analysis.
 All tables can be exported to CSV for external analysis in MATLAB or Excel.
 
-### C++ Real-Time Module (`src/cpp/`)
+### Flight Software (`src/fsw/`)
 
 Embedded flight software prototype written in C++17 demonstrating real-time GNC patterns:
 custom memory pool allocators (zero-allocation after init), lock-free ring buffers for
@@ -404,6 +411,6 @@ profile. It integrates concepts from orbital mechanics, attitude dynamics, senso
 control theory, autonomy, real-time systems, and data management into a single cohesive
 simulation framework.
 
-**Mission:** Miami-Moon-Jupiter Round Trip (Explorer-VII / Heavy Lifter Mk-IV)
+**Mission:** KSC-Moon-Jupiter Round Trip (Explorer-VII / Heavy Lifter Mk-IV)
 
 **Technology:** Python 3, C++17, MATLAB, SQLite, pandas, NumPy, SciPy, scikit-learn

@@ -3,7 +3,7 @@
 ===============================================================================
 GNC MISSION SIMULATION - MAIN ENTRY POINT
 ===============================================================================
-Miami -> Moon (2 orbits) -> Jupiter (3 orbits) -> Miami
+KSC -> Moon (2 orbits) -> Jupiter (3 orbits) -> KSC
 
 This is the master script that orchestrates the entire GNC simulation.
 It initializes all subsystems, runs the mission simulation, generates
@@ -54,7 +54,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 # ---------------------------------------------------------------------------
 from core.constants import (
     EARTH_MU, EARTH_RADIUS, MOON_MU, MOON_SMA, JUPITER_MU,
-    MIAMI_LATITUDE, MIAMI_LONGITUDE, DEG2RAD, RAD2DEG, LEO_ALTITUDE,
+    KSC_LATITUDE, KSC_LONGITUDE, DEG2RAD, RAD2DEG, LEO_ALTITUDE,
     LEO_RADIUS, LEO_VELOCITY, PI, TWO_PI
 )
 from core.quaternion import Quaternion
@@ -128,7 +128,7 @@ def load_config(config_path: str = None) -> dict:
         Dictionary of mission configuration parameters
     """
     if config_path is None:
-        config_path = str(PROJECT_ROOT.parent.parent / 'config' / 'mission_config.yaml')
+        config_path = str(PROJECT_ROOT.parent / 'config' / 'mission_config.yaml')
 
     logger.info(f"Loading configuration from: {config_path}")
     with open(config_path, 'r') as f:
@@ -144,7 +144,7 @@ def setup_output_directories():
         'output/data', 'output/monte_carlo', 'output/benchmarks',
         'output/autonomy'
     ]
-    base = PROJECT_ROOT.parent.parent
+    base = PROJECT_ROOT.parent
     for d in dirs:
         (base / d).mkdir(parents=True, exist_ok=True)
     logger.info("Output directories ready")
@@ -232,10 +232,10 @@ def initialize_subsystems(config: dict) -> dict:
 
     # --- Navigation Filters ---
     logger.info("Creating navigation filters (EKF + UKF)...")
-    # Initial state: position at Miami, zero velocity, identity attitude
+    # Initial state: position at KSC, zero velocity, identity attitude
     x0 = np.zeros(15)
-    miami_ecef = geodetic_to_ecef(MIAMI_LATITUDE, MIAMI_LONGITUDE, 0.0)
-    x0[0:3] = ecef_to_eci(miami_ecef, 0.0)  # Initial ECI position
+    ksc_ecef = geodetic_to_ecef(KSC_LATITUDE, KSC_LONGITUDE, 0.0)
+    x0[0:3] = ecef_to_eci(ksc_ecef, 0.0)  # Initial ECI position
 
     P0 = np.diag([
         100.0, 100.0, 100.0,       # Position uncertainty (m)
@@ -623,7 +623,7 @@ def main():
     the requested simulation mode(s).
     """
     parser = argparse.ArgumentParser(
-        description='GNC Mission Simulation: Miami -> Moon -> Jupiter -> Miami',
+        description='GNC Mission Simulation: KSC -> Moon -> Jupiter -> KSC',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -661,7 +661,7 @@ Examples:
     # Print banner
     print("=" * 70)
     print("  GNC MISSION SIMULATION")
-    print("  Miami, FL -> Moon (2 orbits) -> Jupiter (3 orbits) -> Miami, FL")
+    print("  KSC, FL -> Moon (2 orbits) -> Jupiter (3 orbits) -> KSC, FL")
     print("=" * 70)
     print(f"  Start time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"  Random seed: {args.seed}")

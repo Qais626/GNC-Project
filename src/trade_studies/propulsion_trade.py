@@ -1,7 +1,7 @@
 """
 Propulsion Trade Study
 Compares Chemical Bipropellant, Solid Rocket, Ion Thruster, Nuclear Thermal
-across the full Miami-Moon-Jupiter-Miami mission.
+across the full KSC-Moon-Jupiter-KSC mission.
 Generates 8 comparison plots.
 """
 

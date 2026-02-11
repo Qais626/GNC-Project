@@ -23,8 +23,8 @@ set -e  # Exit on first error
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-SRC_PY="$PROJECT_ROOT/src/python"
-SRC_CPP="$PROJECT_ROOT/src/cpp"
+SRC_PY="$PROJECT_ROOT/src"
+SRC_CPP="$PROJECT_ROOT/src/fsw"
 OUTPUT_DIR="$PROJECT_ROOT/output"
 BUILD_DIR="$SRC_CPP/build"
 

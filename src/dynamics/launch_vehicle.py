@@ -2,7 +2,7 @@
 ===============================================================================
 Launch Vehicle Model
 ===============================================================================
-Two-stage rocket with fairing for launch from Miami, FL to LEO parking orbit.
+Two-stage rocket with fairing for launch from Kennedy Space Center, FL to LEO parking orbit.
 Models: thrust variation with altitude (Isp interpolation), Mach-dependent
 drag (transonic drag rise), aerodynamic forces, gravity turn guidance,
 staging events, heating rate estimation.
@@ -75,7 +75,7 @@ class RocketStage:
 
 class LaunchVehicle:
     """
-    Two-stage launch vehicle model for ascent from Miami to LEO.
+    Two-stage launch vehicle model for ascent from Kennedy Space Center to LEO.
 
     Simulates the full ascent trajectory including:
     - Two-stage propulsion with altitude-dependent Isp

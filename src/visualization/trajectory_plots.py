@@ -3,7 +3,7 @@
 GNC PROJECT - Sophisticated Trajectory Visualization System
 ===============================================================================
 
-Professional-quality trajectory plots for the Miami-Moon-Jupiter mission.
+Professional-quality trajectory plots for the KSC-Moon-Jupiter mission.
 
 Features:
   - Multi-scenario comparison (Hohmann, bi-elliptic, gravity assist)
@@ -276,7 +276,7 @@ def plot_full_mission_3d(scenarios: List[TrajectoryScenario],
         z = r_e * np.cos(v)
         ax.plot_surface(x, y, z, color=COLORS['earth'], alpha=0.7)
 
-    ax.set_title('Mission Trajectory Comparison\nMiami → Moon → Jupiter → Miami',
+    ax.set_title('Mission Trajectory Comparison\nKSC → Moon → Jupiter → KSC',
                  fontsize=16, fontweight='bold', pad=20)
 
     # Add legend with Delta-V summary
@@ -423,7 +423,7 @@ def plot_earth_departure(output_path: str):
     ax4.set_xlim(0, 600)
     ax4.set_ylim(0, 5)
 
-    plt.suptitle('Earth Departure Phase Analysis\nMiami Launch Site (25.76°N, 80.19°W)',
+    plt.suptitle('Earth Departure Phase Analysis\nKennedy Space Center (28.57°N, 80.65°W)',
                  fontsize=16, fontweight='bold', y=1.02)
 
     plt.tight_layout()
@@ -667,13 +667,13 @@ def plot_mission_timeline(output_path: str):
     ax2.set_xlabel('Calendar Year')
 
     ax.set_yticks([])
-    ax.set_title('Mission Timeline: Miami → Moon → Jupiter → Miami\n'
+    ax.set_title('Mission Timeline: KSC → Moon → Jupiter → KSC\n'
                  'Total Duration: ~4.1 Years',
                  fontsize=16, fontweight='bold', pad=20)
 
     # Add key milestones
     milestones = [
-        (0, 'Launch from Miami'),
+        (0, 'Launch from KSC'),
         (3, 'Moon Arrival'),
         (730, 'Jupiter Arrival'),
         (1490, 'Earth Return'),
@@ -775,7 +775,7 @@ def plot_monte_carlo_dispersions(output_path: str, n_runs: int = 100):
 
     ax3.scatter(landing_x, landing_y, c=COLORS['monte_carlo'], alpha=0.5, s=30)
     ax3.scatter([0], [0], c=COLORS['danger'], s=200, marker='X', zorder=10,
-                label='Target (Miami)')
+                label='Target (KSC)')
 
     # Draw 1-sigma and 3-sigma ellipses
     from matplotlib.patches import Ellipse

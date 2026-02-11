@@ -22,11 +22,11 @@ Thumbs.db
 # Output data (generated files)
 output/
 
-# Claude Code
+# Tooling metadata
 .claude/
 
-# C++ build
-src/cpp/build/
+# Flight software build
+src/fsw/build/
 *.o
 *.so
 *.dylib

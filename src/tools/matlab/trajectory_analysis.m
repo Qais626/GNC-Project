@@ -231,7 +231,7 @@ fprintf('  Propellant mass fraction : %.1f%%\n\n', 100*total_prop/m0);
 
 % Resolve the output directory relative to this script's location
 output_dir = fullfile(fileparts(mfilename('fullpath')), ...
-    '..', '..', 'output', 'matlab');
+    '..', '..', '..', 'output', 'matlab');
 if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end

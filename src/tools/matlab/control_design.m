@@ -27,7 +27,7 @@ clear; clc; close all;
 %  ------------------------------------------------------------------------
 
 % Output directory for saved figures
-outputDir = fullfile(fileparts(mfilename('fullpath')), '..', '..', 'output', 'matlab');
+outputDir = fullfile(fileparts(mfilename('fullpath')), '..', '..', '..', 'output', 'matlab');
 if ~exist(outputDir, 'dir')
     mkdir(outputDir);
     fprintf('[INFO] Created output directory: %s\n', outputDir);

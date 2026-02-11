@@ -37,8 +37,8 @@ from core.constants import (
     EARTH_RADIUS,
     EARTH_ROTATION_RATE,
     EARTH_MU,
-    MIAMI_LATITUDE,
-    MIAMI_LONGITUDE,
+    KSC_LATITUDE,
+    KSC_LONGITUDE,
     RAD2DEG,
 )
 from core.quaternion import Quaternion
@@ -131,17 +131,17 @@ class SimulationEngine:
         """
         Set the initial spacecraft state at the launch site.
 
-        Position is computed from the Miami launch site coordinates in the
-        Earth-Centered Inertial (ECI) frame (assumes epoch alignment so that
-        GMST ~ Miami longitude at t = 0 for simplicity).  Velocity includes
+        Position is computed from the Kennedy Space Center launch site
+        coordinates in the Earth-Centered Inertial (ECI) frame (assumes epoch
+        alignment so that GMST ~ KSC longitude at t = 0 for simplicity).  Velocity includes
         the Earth surface rotation contribution.
 
         After this call, the state dictionary is fully populated and ready
         for the first simulation step.
         """
         # Launch site in ECI (simplified: GMST offset = 0 at epoch)
-        lat = MIAMI_LATITUDE
-        lon = MIAMI_LONGITUDE
+        lat = KSC_LATITUDE
+        lon = KSC_LONGITUDE
         r = EARTH_RADIUS
 
         # ECI position from geodetic (spherical approximation)

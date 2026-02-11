@@ -17,8 +17,8 @@ set -o pipefail
 # ---------------------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-SRC_PY="$PROJECT_ROOT/src/python"
-SRC_CPP="$PROJECT_ROOT/src/cpp"
+SRC_PY="$PROJECT_ROOT/src"
+SRC_CPP="$PROJECT_ROOT/src/fsw"
 BUILD_DIR="$SRC_CPP/build"
 
 PYTHON_PASS=0
@@ -92,7 +92,7 @@ if [ -n "$TEST_DIRS" ]; then
         PYTHON_FAIL=1
     fi
 else
-    echo "[SKIP] No test directories found (tests/ or src/python/tests/)."
+    echo "[SKIP] No test directories found (tests/ or src/tests/)."
     echo "       Create test files following the pattern: test_*.py"
 fi
 echo ""
@@ -139,7 +139,7 @@ elif [ -d "$BUILD_DIR" ]; then
         done
     else
         echo "[SKIP] No C++ test executables found in $BUILD_DIR."
-        echo "       Build with: cd src/cpp/build && cmake .. && make"
+        echo "       Build with: cd src/fsw/build && cmake .. && make"
     fi
 else
     echo "[SKIP] C++ not built. Run ./scripts/run_full_sim.sh to build first."

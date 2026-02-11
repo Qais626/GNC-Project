@@ -12,7 +12,7 @@ Full mission trajectory optimization using multiple methods:
 - Gravity assist trajectory design
 - B-plane targeting for planetary flybys
 
-The mission: Miami -> LEO -> Moon (2 orbits) -> Jupiter (3 orbits) -> Earth
+The mission: KSC -> LEO -> Moon (2 orbits) -> Jupiter (3 orbits) -> Earth
 
 Optimization formulation:
     Minimize: Total delta-V (or total propellant mass)
@@ -80,7 +80,7 @@ class TrajectoryLeg:
 
 class FullMissionTrajectoryOptimizer:
     """
-    Optimizes the complete Miami-Moon-Jupiter-Miami mission trajectory.
+    Optimizes the complete KSC-Moon-Jupiter-KSC mission trajectory.
 
     Uses a hierarchical approach:
     1. Patched conics for initial guess (fast, approximate)

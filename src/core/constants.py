@@ -92,11 +92,11 @@ SUN_LUMINOSITY = 3.828e26             # Watts
 SOLAR_PRESSURE_AT_1AU = 4.56e-6       # N/m^2 (solar radiation pressure)
 
 # =============================================================================
-# MIAMI LAUNCH SITE
+# KENNEDY SPACE CENTER LAUNCH SITE
 # =============================================================================
-MIAMI_LATITUDE = 25.7617 * DEG2RAD    # rad
-MIAMI_LONGITUDE = -80.1918 * DEG2RAD  # rad
-MIAMI_ALTITUDE = 0.0                   # m (sea level)
+KSC_LATITUDE = 28.5721 * DEG2RAD      # rad
+KSC_LONGITUDE = -80.6480 * DEG2RAD    # rad
+KSC_ALTITUDE = 3.0                     # m (near sea level)
 
 # =============================================================================
 # USEFUL DERIVED QUANTITIES
@@ -125,7 +125,7 @@ G0 = 9.80665                              # m/s^2
 EARTH_MOON_DIST = MOON_SMA                # ~384,400 km
 EARTH_JUPITER_DIST = JUPITER_SMA          # ~778.57 million km
 
-# Total mission delta-V budget (Miami-Moon-Jupiter-Miami)
+# Total mission delta-V budget (KSC-Moon-Jupiter-KSC)
 MISSION_DELTA_V = 15000.0                 # m/s (approximate total budget)
 
 

@@ -10,14 +10,14 @@ clear; clc; close all;
 
 % Output directory for saved figures
 output_dir = fullfile(fileparts(mfilename('fullpath')), ...
-    '..', '..', 'output', 'matlab');
+    '..', '..', '..', 'output', 'matlab');
 if ~exist(output_dir, 'dir')
     mkdir(output_dir);
 end
 
 % Input data directory (where Python simulation writes CSV files)
 data_dir = fullfile(fileparts(mfilename('fullpath')), ...
-    '..', '..', 'output', 'data');
+    '..', '..', '..', 'output', 'data');
 
 % Physical constants
 mu_earth = 3.986e14;   % Earth gravitational parameter [m^3/s^2]
